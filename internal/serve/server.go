@@ -112,7 +112,7 @@ func NewHandler(opts Options) http.Handler {
 		}
 		cfg, err := audit.Discover(opts.Audit)
 		if err != nil {
-			writeError(w, err)
+			writeError(w, "config discovery failed")
 			return
 		}
 		writeJSON(w, healthResponse{
@@ -128,7 +128,7 @@ func NewHandler(opts Options) http.Handler {
 		}
 		report, err := audit.Run(r.Context(), opts.Audit)
 		if err != nil {
-			writeError(w, err)
+			writeError(w, "local audit failed")
 			return
 		}
 		writeJSON(w, report)
@@ -139,7 +139,7 @@ func NewHandler(opts Options) http.Handler {
 		}
 		cfg, err := audit.Discover(opts.Audit)
 		if err != nil {
-			writeError(w, err)
+			writeError(w, "config discovery failed")
 			return
 		}
 		writeJSON(w, cfg)
@@ -150,7 +150,7 @@ func NewHandler(opts Options) http.Handler {
 		}
 		status, err := audit.NodeStatus(r.Context(), opts.Audit)
 		if err != nil {
-			writeError(w, err)
+			writeError(w, "node status failed")
 			return
 		}
 		writeJSON(w, status)
@@ -161,7 +161,7 @@ func NewHandler(opts Options) http.Handler {
 		}
 		status, err := audit.WalletStatus(opts.Audit)
 		if err != nil {
-			writeError(w, err)
+			writeError(w, "wallet status failed")
 			return
 		}
 		writeJSON(w, status)
@@ -176,22 +176,22 @@ func UnsafePublicBind(addr string) bool {
 func renderIndex(w http.ResponseWriter, r *http.Request, opts Options) {
 	report, err := audit.Run(r.Context(), opts.Audit)
 	if err != nil {
-		writeError(w, err)
+		writeError(w, "local audit failed")
 		return
 	}
 	cfg, err := audit.Discover(opts.Audit)
 	if err != nil {
-		writeError(w, err)
+		writeError(w, "config discovery failed")
 		return
 	}
 	node, err := audit.NodeStatus(r.Context(), opts.Audit)
 	if err != nil {
-		writeError(w, err)
+		writeError(w, "node status failed")
 		return
 	}
 	wallet, err := audit.WalletStatus(opts.Audit)
 	if err != nil {
-		writeError(w, err)
+		writeError(w, "wallet status failed")
 		return
 	}
 
@@ -233,10 +233,10 @@ func writeJSON(w http.ResponseWriter, v any) {
 	_ = enc.Encode(v)
 }
 
-func writeError(w http.ResponseWriter, err error) {
+func writeError(w http.ResponseWriter, msg string) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusInternalServerError)
-	_ = json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+	_ = json.NewEncoder(w).Encode(map[string]string{"error": msg})
 }
 
 func countFindings(findings []audit.Finding) map[string]int {

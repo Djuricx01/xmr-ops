@@ -146,6 +146,17 @@ func TestBackupSignalIgnoresRestartPolicy(t *testing.T) {
 	assertSeverity(t, report, "backup_signal", SeverityWarn)
 }
 
+func TestPrivacyTermsReturnReview(t *testing.T) {
+	report := runFixture(t, "example-ok")
+	f := findingByID(t, report, "tor_isolation")
+	if f.Severity != SeverityReview {
+		t.Fatalf("tor_isolation severity = %s, want review", f.Severity)
+	}
+	if f.Recommendation != "Presence of Tor/I2P/proxy terms does not prove isolation is correct." {
+		t.Fatalf("recommendation = %q", f.Recommendation)
+	}
+}
+
 func writeFixtureFile(t *testing.T, root, name, content string) {
 	t.Helper()
 	path := filepath.Join(root, name)

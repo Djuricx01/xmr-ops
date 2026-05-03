@@ -1077,7 +1077,7 @@ func checkTorIsolation(st state) Finding {
 		return finding("tor_isolation", SeverityReview, "privacy isolation signal found; manual review needed", uniqueEvidence(ev), "Presence of Tor/I2P terms does not prove isolation is correct.")
 	}
 	if len(privacyEv) > 0 {
-		return finding("tor_isolation", SeverityPass, "privacy isolation signal detected", uniqueEvidence(privacyEv), "Review that privacy routing matches the deployment threat model.")
+		return finding("tor_isolation", SeverityReview, "privacy isolation signal detected", uniqueEvidence(privacyEv), "Presence of Tor/I2P/proxy terms does not prove isolation is correct.")
 	}
 	return finding("tor_isolation", SeverityReview, "privacy isolation signal not detected", nil, "Manual review if remote nodes or public RPC are configured elsewhere.")
 }

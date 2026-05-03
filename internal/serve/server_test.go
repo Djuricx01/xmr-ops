@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"xmr-ops/internal/audit"
@@ -56,6 +57,31 @@ func TestAuditHandler(t *testing.T) {
 	}
 	if report.Status != "critical" {
 		t.Fatalf("status = %s, want critical", report.Status)
+	}
+}
+
+func TestAuditHandlerUsesGenericErrors(t *testing.T) {
+	handler := NewHandler(Options{
+		Audit: audit.Options{Root: filepath.Join("missing", "root")},
+		Addr:  DefaultAddr,
+	})
+
+	rec := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/api/audit", nil)
+	handler.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, body = %s", rec.Code, rec.Body.String())
+	}
+	var got map[string]string
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+		t.Fatal(err)
+	}
+	if got["error"] != "local audit failed" {
+		t.Fatalf("error = %q", got["error"])
+	}
+	if strings.Contains(rec.Body.String(), "missing") {
+		t.Fatalf("response exposed raw path: %s", rec.Body.String())
 	}
 }
 
