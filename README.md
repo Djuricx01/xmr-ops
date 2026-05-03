@@ -30,4 +30,6 @@ Local console:
 xmr-ops serve --root ./testdata/example-bad --addr 127.0.0.1:8787
 ```
 
-The console binds to `127.0.0.1:8787` by default and has no authentication in v0. It refuses public binds unless `--unsafe-public-bind` is passed. RPC probing is intentionally left out in v0; status pages use local files and local command detection only.
+The local console binds to 127.0.0.1:8787 by default. It has no login because it is not meant to be exposed publicly. It refuses public binds unless --unsafe-public-bind is passed.
+
+It does not probe RPC endpoints yet. The status pages only use local files and local command detection.
