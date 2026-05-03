@@ -1,0 +1,20 @@
+services:
+  wallet-rpc:
+    image: monero-wallet-rpc:latest
+    command:
+      - --rpc-bind-ip=0.0.0.0
+      - --disable-rpc-login
+    ports:
+      - "18082:18082"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    privileged: true
+
+  monerod:
+    image: ghcr.io/sethforprivacy/simple-monerod:v0.18.1.2
+    command:
+      - --rpc-bind-ip=0.0.0.0
+      - --restricted-rpc
+      - --confirm-external-bind
+    ports:
+      - "18081:18081"

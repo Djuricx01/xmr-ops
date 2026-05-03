@@ -1,0 +1,5 @@
+merchant.example {
+  reverse_proxy /webhook merchant:8080 {
+    header_up X-Webhook-Signature {http.request.header.X-Webhook-Signature}
+  }
+}

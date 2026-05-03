@@ -1,0 +1,5 @@
+/xmr-ops.exe
+/*.test
+/*.out
+serve.out.txt
+serve.err.txt
